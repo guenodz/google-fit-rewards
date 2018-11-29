@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Steps Rewards</string>
+    <string name="steps">STEPS</string>
+    <string name="your_rewards">Rewards for this week</string>
+</resources>
