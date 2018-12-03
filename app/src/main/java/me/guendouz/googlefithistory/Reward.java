@@ -3,6 +3,7 @@ package me.guendouz.googlefithistory;
 import java.util.ArrayList;
 import java.util.List;
 
+// a simple class to represent a Reward object
 public class Reward {
 
     private int id;

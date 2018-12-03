@@ -65,11 +65,13 @@ public class MainActivity extends AppCompatActivity {
 
         setElementVisibility(false);
 
+        // Create the FitnessOptions object
         FitnessOptions fitnessOptions = FitnessOptions.builder()
                 .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
                 .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
                 .build();
 
+        // Check if the user has already gave permission to access his data, otherwise, we must request permissions
         if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), fitnessOptions)) {
             GoogleSignIn.requestPermissions(
                     this,
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     GoogleSignIn.getLastSignedInAccount(this),
                     fitnessOptions);
         } else {
+            // if we have user permission we can do our job!
             accessGoogleFit();
         }
     }
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
     }
 
+    // Handle user's response to our permission request
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
@@ -95,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Create a new data request and call the History API to get data
     private void accessGoogleFit() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
@@ -140,15 +145,20 @@ public class MainActivity extends AppCompatActivity {
         if (dataReadResponse.getBuckets().size() > 0) {
             Log.i(TAG, "Number of returned buckets of DataSets is: " + dataReadResponse.getBuckets().size());
             Bucket bucket = dataReadResponse.getBuckets().get(0);
+            // Check if the returned bucket by the API is not empty
             if (bucket.getDataSets().size() > 0) {
                 DataSet dataSet = bucket.getDataSets().get(0);
+                // Check if dataset is not empty
                 if (!dataSet.isEmpty()) {
+                    // Since we are requesting only one data at a time, our dataset has one datapoint
+                    // that contains the steps count during the week
                     DataPoint dataPoint = dataSet.getDataPoints().get(0);
                     stepsCountPerWeek = dataPoint.getValue(Field.FIELD_STEPS).asInt();
                     Log.i(TAG, "Number of steps in the last week : " + stepsCountPerWeek);
                     tvText.setText(String.valueOf(stepsCountPerWeek));
                     tvTimePeriod.setText(String.format("%s - %s", dateFormat.format(dataPoint.getStartTime(TimeUnit.MILLISECONDS)),
                             dateFormat.format(dataPoint.getEndTime(TimeUnit.MILLISECONDS))));
+                    // create the adapter and attach it to the recycler view
                     rewardsAdapter = new RewardsAdapter(stepsCountPerWeek, Reward.generateSampleRewards());
                     recyclerView.setAdapter(rewardsAdapter);
                 }

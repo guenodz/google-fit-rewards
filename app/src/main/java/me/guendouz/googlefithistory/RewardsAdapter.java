@@ -1,6 +1,5 @@
 package me.guendouz.googlefithistory;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class RewardsAdapter extends RecyclerView.Adapter<RewardsAdapter.RewardViewHolder> {
 
+    // we need the current user steps so we can check if he's eligible for rewards
     private int currentUserSteps;
     private List<Reward> rewardList;
 
@@ -66,9 +66,8 @@ public class RewardsAdapter extends RecyclerView.Adapter<RewardsAdapter.RewardVi
                 tvRewardName.setText(reward.getName());
                 tvRewardSteps.setText(String.format("%d Pts", reward.getSteps()));
                 ivRewardImage.setImageResource(reward.getImageId());
+                //  if the reward steps is greater than current user steps, the user can't get the reward!
                 if (reward.getSteps() > currentUserSteps) {
-                    Log.i(MainActivity.TAG, "Steps : " + reward.getSteps());
-                    Log.i(MainActivity.TAG, "User Steps : " + currentUserSteps);
                     btnBuyReward.setEnabled(false);
                 }
             }
